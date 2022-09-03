@@ -1,0 +1,42 @@
+import "@cadl-lang/rest";
+
+@serviceTitle("Widget Service")
+@serviceVersion("1.0.0")
+@doc("A service for managing widgets.")
+@server("https://contoso.com", "The production server.")
+@route("/api")
+namespace dummy;
+
+using Cadl.Http;
+
+@error
+model Error {
+  code: int32;
+  message: string;
+}
+
+model Widget {
+  @key id: string;
+  weight: int32;
+  color: "red" | "blue";
+}
+
+model WidgetAnalysis {
+  score: float32;
+}
+
+@route("/widgets")
+@tag("Widgets")
+interface Widgets {
+  @doc("Get a list of widgets")
+  @get list(): Widget[] | Error;
+
+  @doc("Create a new widget")
+  @post create(@body body: Widget): Widget | Error;
+
+  @doc("Get a widget by id")
+  @route("/{id}") @get read(@path id: string): Widget | Error;
+
+  @doc("Analyze a widget")
+  @route("{id}/analyze") @post analyze(@path id: string): WidgetAnalysis | Error;
+}
